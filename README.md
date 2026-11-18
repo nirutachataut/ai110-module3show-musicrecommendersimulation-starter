@@ -155,6 +155,8 @@ The catalog and profile are simplified. The system cannot learn from listening b
 
 This evaluation checks how the existing content-based scoring rule behaves for distinct preferences, a conflicting mood/energy combination, and a genre that is not present in the catalog. The scoring weights and logic were not changed: exact genre matches add 2.0 points, exact mood matches add 1.0 point, and energy similarity adds up to 1.0 point.
 
+The recommendation blocks below are the captured output of `python3 -m src.main`, which runs all five profiles against the current 20-song catalog.
+
 The five profiles tested were:
 
 1. **High-Energy Pop** — pop, happy, energy 0.9
