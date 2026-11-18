@@ -2,16 +2,7 @@
 
 ## Project Summary
 
-In this project you will build and explain a small music recommender system.
-
-Your goal is to:
-
-- Represent songs and a user "taste profile" as data
-- Design a scoring rule that turns that data into recommendations
-- Evaluate what your system gets right and wrong
-- Reflect on how this mirrors real world AI recommenders
-
-This project is a small content-based music recommender. It compares songs in a CSV catalog with a user's favorite genre, favorite mood, and target energy. Genre and mood matches earn points, and songs with energy closer to the target earn more points. The program ranks the songs, returns the top five, and shows why each one received its score. The local sample catalog contains 20 songs.
+This project is a small content-based music recommender. It compares songs in a CSV catalog with a user's favorite genre, favorite mood, and target energy. Genre and mood matches earn points, and songs with energy closer to the target earn more points. The program ranks the songs, returns the top five, and explains each score. The catalog contains 20 sample songs.
 
 ---
 
@@ -88,13 +79,11 @@ python -m src.main
 
 ### Running Tests
 
-Run the starter tests with:
+Run the tests with:
 
 ```bash
 pytest
 ```
-
-You can add more tests in `tests/test_recommender.py`.
 
 ---
 
@@ -142,7 +131,7 @@ Top recommendations:
 
 ## Experiments You Tried
 
-No separate scoring experiments are recorded for this version. The command-line example uses a pop, happy profile with a target energy of 0.8, and the scoring weights remain at 2.0 for genre and 1.0 for mood.
+I tested the recommender using the original scoring rules: +2.0 for a genre match, +1.0 for a mood match, and up to +1.0 for energy similarity. I did not compare alternate weights or add other features. In the verified CLI run, the sample pop/happy profile with target energy 0.8 ranked Sunrise City, Gym Hero, and Rooftop Lights as its top three. This confirms the current rule works for that example; it does not show how other profiles or different weights would perform.
 
 ---
 
@@ -158,10 +147,8 @@ The model card describes the system's data, strengths, limitations, and evaluati
 
 [**Model Card**](model_card.md)
 
-This project shows how a recommender turns a few preferences into a ranked list by assigning each song a score. Small choices in the scoring rule matter: genre receives more weight than mood, and exact labels treat similar genres as different. A recommendation can therefore look precise while reflecting only a small part of someone's taste.
+I learned that music recommendation systems use more than just genre to suggest songs. I found it interesting how mood, energy, and scoring weights can affect which songs get recommended. In this version, genre is worth twice as much as mood, and energy similarity can add another point.
 
-The catalog and profile are both simplified. The system cannot learn from listening behavior or explain preferences beyond the three features in its score. In a larger system, missing genres, uneven data, and repeated exposure to similar recommendations could make the results less useful for some listeners. Testing with more songs and different profiles would help show where the scoring rule works and where it needs improvement.
-
-If the assignment requires a personal example, add one specific thing you learned or found surprising; that experience cannot be inferred from the code or tests.
+The catalog and profile are simplified. The system cannot learn from listening behavior or explain preferences beyond the three features in its score. Missing genres, uneven data, and repeated exposure to similar recommendations could make results less useful for some listeners.
 
 

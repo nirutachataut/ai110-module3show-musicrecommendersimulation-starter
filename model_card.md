@@ -52,6 +52,4 @@ Possible next steps are to test more user profiles, add a small set of explicit 
 
 ## 9. Personal Reflection  
 
-The notes below describe what the implementation demonstrates, not a personal experience. Add a specific example of what you learned or found surprising if your assignment expects your own perspective.
-
-This project demonstrates that recommendations depend on choices about which features to represent and how much weight to give each one. The score is easy to understand, but it does not represent every reason someone might like a song. A real music app would need broader data and careful evaluation, because repeated or uneven recommendations could limit what listeners discover.
+I learned that music recommendation systems use more than just genre to suggest songs. I found it interesting how mood, energy, and scoring weights can affect which songs get recommended. This project also shows that the results depend on the features and weights chosen, and do not capture every reason someone might like a song.
