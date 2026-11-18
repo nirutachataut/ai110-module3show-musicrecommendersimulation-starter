@@ -1,55 +1,45 @@
-# 🎧 Model Card: Music Recommender Simulation
+# Model Card: VibeFinder 1.0
 
-## 1. Model Name  
+## 1. Model Name
 
-**Simple Content-Based Music Recommender**
+**VibeFinder 1.0** is a beginner-friendly music recommendation simulation.
 
----
+## 2. Goal / Task
 
-## 2. Intended Use  
+VibeFinder 1.0 recommends songs using a listener's preferred genre, mood, and target energy. It compares those preferences with each song's labels and energy value, then ranks songs that have similar characteristics.
 
-This recommender ranks songs in a small catalog for a user who provides a favorite genre, favorite mood, and target energy. It assumes that exact genre and mood matches, along with similar energy levels, are useful signals of music preference. It is intended for classroom exploration, not for real-world users or production use.
+## 3. Data Used
 
----
+The `data/songs.csv` file contains 20 sample songs. It includes each song's title, artist, genre, mood, energy, tempo, valence, danceability, and acousticness, but the scoring algorithm uses only genre, mood, and energy. The catalog has 17 genres: lofi appears three times, pop twice, and 15 genres once each. This small sample does not cover every style or mood; for example, it has no sad-mood songs.
 
-## 3. How the Model Works  
+## 4. Algorithm Summary
 
-This content-based recommender compares each song's genre, mood, and energy with the user's preferred genre, mood, and target energy. It gives a song 2.0 points for a matching genre and 1.0 point for a matching mood. It adds energy similarity points using `1.0 - abs(song_energy - target_energy)`, so songs closer to the target energy receive more points.
+An exact genre match adds 2.0 points, and an exact mood match adds 1.0 point. Energy similarity adds up to 1.0 point using `1.0 - abs(song_energy - target_energy)`, so a closer energy match earns more points. The maximum score is 4.0. The system sorts songs from highest to lowest score and returns the top K songs.
 
-The system ranks songs from highest to lowest total score and recommends the top K songs. Genre is weighted more heavily than mood, so a genre match can outweigh a mood match. The system also uses only these three features and does not use collaborative filtering, which compares listening patterns across users.
+## 5. Observed Behavior / Biases
 
----
+In the original Chill Lofi results, the three lofi songs ranked first, second, and third. Focus Flow (lofi, focused, energy 0.40) ranked above Spacewalk Thoughts (ambient, chill, energy 0.28), showing how the 2-point genre match can outweigh a mood match and closer energy. Gym Hero (pop, intense, energy 0.93) ranked second for High-Energy Pop because it matched pop and had energy close to 0.9, even though its mood did not match happy. Storm Runner ranked first for Conflicting Sad Rock with 2.99 points from its rock match and energy similarity; no song matched the requested sad mood. Repeatedly recommending the same style is a possible filter-bubble risk, but these tests do not show what would happen over repeated use because the system does not track listening history.
 
-## 4. Data  
+## 6. Evaluation Process
 
-The `data/songs.csv` file contains 20 sample songs with IDs 1 through 20: the first 10 records plus 10 additional sample records. The catalog includes pop, lofi, rock, ambient, jazz, synthwave, indie pop, reggae, blues, electronic, country, hip-hop, classical, R&B, folk, punk, and metal. Its moods include happy, chill, intense, relaxed, moody, focused, energetic, nostalgic, confident, peaceful, romantic, hopeful, and rebellious. Each row also has energy, tempo, valence, danceability, and acousticness values. The score uses only genre, mood, and energy. These small, example records do not capture the full range of music or musical taste.
+The original system was tested with High-Energy Pop (`pop`, `happy`, 0.9), Chill Lofi (`lofi`, `chill`, 0.2), Deep Intense Rock (`rock`, `intense`, 0.9), Conflicting Sad Rock (`rock`, `sad`, 0.9), and Unsupported Genre (`shoegaze`, `chill`, 0.2). Their top songs were Sunrise City, Library Rain, Storm Runner, Storm Runner, and Spacewalk Thoughts, respectively. A separate weight-shift experiment changed genre from +2.0 to +1.0 and energy similarity from up to +1.0 to up to +2.0, while leaving mood at +1.0. Only the Chill Lofi top-five order changed: Spacewalk Thoughts moved from fourth to third, and Focus Flow moved from third to fourth; the other four profiles kept their order. After restoring the original weights, all 3 existing tests passed. These comparisons show how weights affect rankings, but do not prove which recommendations listeners would prefer.
 
----
+## 7. Intended Use and Non-Intended Use
 
-## 5. Strengths  
+VibeFinder 1.0 is intended for beginner-friendly learning about how song features and scoring weights affect recommendations. It is not intended to replace professional streaming recommendation systems or to predict every listener's preferences accurately.
 
-The scoring rule clearly rewards the preferences it receives: a genre match is worth 2 points, a mood match is worth 1 point, and energy similarity contributes up to 1 point. This makes its ranking easy to explain. In the included sample profile, a pop song with a happy mood and energy close to 0.8 receives a high score. The current unit tests check that a matching song ranks above a non-matching one and that the explanation includes the score components.
+## 8. Ideas for Improvement
 
----
+- Add more songs and a wider range of genres and moods.
+- Use listener feedback to test whether different scoring weights are more useful.
+- Explore additional features, such as tempo or valence, if they are useful to users.
 
-## 6. Limitations and Bias 
+## Personal Reflection
 
-The catalog is very small and cannot represent all genres, moods, artists, or listeners. Exact label comparisons can miss songs with related but differently named styles. Genre has twice the weight of mood, so it may outweigh a better mood or energy match. Although the data contains tempo, valence, danceability, and acousticness, the score ignores them; `likes_acoustic` is also stored on the profile but unused. The system does not use lyrics, audio analysis, listening history, or user feedback. These choices can make results narrow or repetitive and favor users whose preferences fit the available labels.
+During this project, my biggest learning moment was understanding how a simple scoring system can recommend songs based on someone's preferences. Before this project, I didn't realize that comparing features like genre, mood, and energy could make such a difference in recommendations.
 
----
+Using AI tools helped me understand the code, build the scoring functions, and fix errors. However, I also learned that I needed to double-check the AI's suggestions by running the program and testing the results to make sure everything worked correctly.
 
-## 7. Evaluation  
+What surprised me most was how a simple algorithm could still recommend songs that matched different musical tastes. I also noticed that changing the importance of certain features could affect which songs appeared first.
 
-The CLI was run with its built-in pop/happy profile and target energy 0.8; it loaded 20 songs and returned five ranked recommendations with score reasons. The unit tests check ranking, explanation contents, and that a non-positive K returns no recommendations. The final test run completed with **3 passed**. No additional profile comparisons or numeric evaluation metrics are recorded.
-
----
-
-## 8. Future Work  
-
-Possible next steps are to test more user profiles, add a small set of explicit preferences for features such as acousticness or tempo, and consider genre or mood similarities rather than only exact matches. The top results could also be checked for variety. Any changes should be compared with the current simple scoring rule so their effect is clear.
-
----
-
-## 9. Personal Reflection  
-
-I learned that music recommendation systems use more than just genre to suggest songs. I found it interesting how mood, energy, and scoring weights can affect which songs get recommended. This project also shows that the results depend on the features and weights chosen, and do not capture every reason someone might like a song.
+If I continued working on this project, I would add more songs from different genres, include features like tempo, and allow users to adjust their preferences to get better recommendations.
