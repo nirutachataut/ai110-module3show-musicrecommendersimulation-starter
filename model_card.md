@@ -2,20 +2,13 @@
 
 ## 1. Model Name  
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+**Simple Content-Based Music Recommender**
 
 ---
 
 ## 2. Intended Use  
 
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+This recommender ranks songs in a small catalog for a user who provides a favorite genre, favorite mood, and target energy. It assumes that exact genre and mood matches, along with similar energy levels, are useful signals of music preference. It is intended for classroom exploration, not for real-world users or production use.
 
 ---
 
@@ -29,76 +22,36 @@ The system ranks songs from highest to lowest total score and recommends the top
 
 ## 4. Data  
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+The `data/songs.csv` file contains 20 sample songs with IDs 1 through 20: the first 10 records plus 10 additional sample records. The catalog includes pop, lofi, rock, ambient, jazz, synthwave, indie pop, reggae, blues, electronic, country, hip-hop, classical, R&B, folk, punk, and metal. Its moods include happy, chill, intense, relaxed, moody, focused, energetic, nostalgic, confident, peaceful, romantic, hopeful, and rebellious. Each row also has energy, tempo, valence, danceability, and acousticness values. The score uses only genre, mood, and energy. These small, example records do not capture the full range of music or musical taste.
 
 ---
 
 ## 5. Strengths  
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The scoring rule clearly rewards the preferences it receives: a genre match is worth 2 points, a mood match is worth 1 point, and energy similarity contributes up to 1 point. This makes its ranking easy to explain. In the included sample profile, a pop song with a happy mood and energy close to 0.8 receives a high score. The current unit tests check that a matching song ranks above a non-matching one and that the explanation includes the score components.
 
 ---
 
 ## 6. Limitations and Bias 
 
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+The catalog is very small and cannot represent all genres, moods, artists, or listeners. Exact label comparisons can miss songs with related but differently named styles. Genre has twice the weight of mood, so it may outweigh a better mood or energy match. Although the data contains tempo, valence, danceability, and acousticness, the score ignores them; `likes_acoustic` is also stored on the profile but unused. The system does not use lyrics, audio analysis, listening history, or user feedback. These choices can make results narrow or repetitive and favor users whose preferences fit the available labels.
 
 ---
 
 ## 7. Evaluation  
 
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
+The CLI was run with its built-in pop/happy profile and target energy 0.8; it loaded 20 songs and returned five ranked recommendations with score reasons. The unit tests check ranking, explanation contents, and that a non-positive K returns no recommendations. The final test run completed with **3 passed**. No additional profile comparisons or numeric evaluation metrics are recorded.
 
 ---
 
 ## 8. Future Work  
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+Possible next steps are to test more user profiles, add a small set of explicit preferences for features such as acousticness or tempo, and consider genre or mood similarities rather than only exact matches. The top results could also be checked for variety. Any changes should be compared with the current simple scoring rule so their effect is clear.
 
 ---
 
 ## 9. Personal Reflection  
 
-A few sentences about your experience.  
+The notes below describe what the implementation demonstrates, not a personal experience. Add a specific example of what you learned or found surprising if your assignment expects your own perspective.
 
-Prompts:  
-
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+This project demonstrates that recommendations depend on choices about which features to represent and how much weight to give each one. The score is easy to understand, but it does not represent every reason someone might like a song. A real music app would need broader data and careful evaluation, because repeated or uneven recommendations could limit what listeners discover.

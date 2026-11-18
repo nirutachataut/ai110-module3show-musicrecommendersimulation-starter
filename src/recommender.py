@@ -1,5 +1,5 @@
 import csv
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple
 from dataclasses import dataclass
 
 @dataclass
@@ -39,12 +39,23 @@ class Recommender:
         self.songs = songs
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
-        # TODO: Implement recommendation logic
-        return self.songs[:k]
+        if k <= 0 or not self.songs:
+            return []
+
+        scored_songs = [
+            (song, *_score_song_for_profile(user, song))
+            for song in self.songs
+        ]
+        ranked_songs = sorted(
+            scored_songs,
+            key=lambda recommendation: recommendation[1],
+            reverse=True,
+        )
+        return [song for song, _, _ in ranked_songs[:k]]
 
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
-        # TODO: Implement explanation logic
-        return "Explanation placeholder"
+        score, reasons = _score_song_for_profile(user, song)
+        return f"Score: {score:.2f}. Reasons: {', '.join(reasons)}."
 
 def load_songs(csv_path: str) -> List[Dict]:
     """Load song records from a CSV file and convert numeric fields."""
@@ -85,6 +96,22 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     reasons.append(f"energy similarity (+{energy_score:.1f})")
 
     return total_score, reasons
+
+
+def _score_song_for_profile(user: UserProfile, song: Song) -> Tuple[float, List[str]]:
+    """Apply the shared dictionary-based scoring rule to the OOP data classes."""
+    user_prefs = {
+        "genre": user.favorite_genre,
+        "mood": user.favorite_mood,
+        "energy": user.target_energy,
+    }
+    song_data = {
+        "genre": song.genre,
+        "mood": song.mood,
+        "energy": song.energy,
+    }
+    return score_song(user_prefs, song_data)
+
 
 def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tuple[Dict, float, List[str]]]:
     """Rank songs by score and return the top k with reasons."""
